@@ -1,0 +1,48 @@
+﻿@page "/counter"
+@inject TimerService timer
+
+<PageTitle>Timer</PageTitle>
+
+<h1>Timer</h1>
+<label>Hours</label>
+<input @bind-value="hours" />
+<label >Minutes</label>
+<input  @bind-value="minutes" />
+<label>Seconds</label>
+<input  @bind-value="seconds" />
+
+<button @onclick=timer.PlusMinute>+</button>
+<button @onclick=StartTimer>Start</button>
+<button @onclick=timer.FinishTimer>Finish</button>
+
+@code {
+    string hours = "";
+    string minutes = "";
+    string seconds = "";
+
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        WorkTimer();
+    }
+
+    private async Task StartTimer()
+    {
+        await timer.StartTimer(hours, minutes, seconds);
+        WorkTimer();
+    }
+
+    private async void WorkTimer()
+    {
+        while (timer.IsStarted)
+        {
+            await Task.Delay(1000);
+            hours = timer.GetHours().ToString();
+            minutes = timer.GetMinutes().ToString();
+            seconds = timer.GetSeconds().ToString();
+            this.StateHasChanged();
+        }
+    }
+
+   
+}
